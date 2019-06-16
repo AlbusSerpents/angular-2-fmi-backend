@@ -1,14 +1,20 @@
-module.exports = (app) => {
-    app.get('/users/:id', (req, res) => {
+module.exports = (secured) => {
+    secured.get('/users/:id', (req, res) => {
         console.log(`Get another user's profile`)
         console.log(req.params);
+
+        res.status(200).json();
     });
 
-    app.get('/users/my-profile', (req, res) => {
+    secured.get('/users/my-profile', (req, res) => {
         console.log('Send my profile')
+
+        res.status(200).json();
     })
 
-    app.put('/users/:id', (req, res) => {
+    secured.put('/users/:id', (req, res) => {
         console.log(`Update my profile`)
+
+        res.status(204).json();
     })
 }
