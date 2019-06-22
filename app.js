@@ -13,6 +13,7 @@ require('./src/rest/sessions.endpoint')(app, securityRouter);
 require('./src/rest/users.endpoint')(securityRouter);
 require('./src/rest/problems.endpoint')(securityRouter);
 require('./src/rest/solutions.endpoint')(securityRouter);
+require('./src/rest/competitions.endpoint')(securityRouter);
 
 app.get('/status', (req, res) => {
   const status = {
