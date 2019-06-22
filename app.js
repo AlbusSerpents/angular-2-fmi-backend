@@ -1,6 +1,7 @@
 require('dotenv').config()
 
 const express = require('express');
+const database = require('./src/config/database');
 const security = require('./src/config/security');
 const securityRouter = require('express').Router();
 
@@ -16,6 +17,7 @@ securityRouter.all('/competitions', security.filter);
 securityRouter.all('/logout', security.filter);
 
 app.use(securityRouter);
+app.use(database.mongoConnector);
 
 require('./src/rest/registration.endpoint')(app);
 require('./src/rest/sessions.endpoint')(app, securityRouter);
