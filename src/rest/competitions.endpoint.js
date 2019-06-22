@@ -14,7 +14,7 @@ module.exports = (secured) => {
     });
 
     secured.get('/competitions/:id', (req, res) => {
-        console.log(`Get another user's profile`)
+        console.log(`Get competition's details`)
         console.log(req.params);
 
         res.status(200).json();
