@@ -52,6 +52,19 @@ exports.findTests = async (id, user, db) => {
     }
 }
 
+exports.update = async (id, body, user, db) => {
+    const errors = validateProblem(body);
+    if (errors) {
+        return errors;
+    }
+
+    const condition = { _id: new mongo.ObjectID(id), "creator.id": user };
+    const set = { $set: { name: body.name, tests: body.tests, description: body.description } };
+    const result = await problemsCollection(db).updateOne(condition, set, { upsert: false });
+
+    return result.matchedCount === 1 ? {} : { error: errorCodes.UPDATE_FAILED };
+}
+
 function validateProblem({ name, description, tests }) {
     if (!name) {
         return { error: errorCodes.MISSING_FIELD };
@@ -62,16 +75,14 @@ function validateProblem({ name, description, tests }) {
     if (!tests || tests === []) {
         return { error: errorCodes.NO_TESTS_PROVIDED };
     } else {
-        return tests
-            .map(test => validateTest(test))
-            .reduce((base, current) => {
-                if (!base) {
-                    return current;
-                } else {
-                    return base;
-                }
-            }, null);
+        return validateTests(tests);
     }
+}
+
+function validateTests(tests) {
+    return tests
+        .map(test => validateTest(test))
+        .reduce((base, current) => { return base ? base : current; }, null);
 }
 
 function validateTest({ input, expected, points }) {
