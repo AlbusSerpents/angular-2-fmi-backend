@@ -3,11 +3,9 @@ const networking = require('./../shared/networking.utils');
 
 
 module.exports = (secured) => {
-    secured.get('/problems/', (req, res) => {
-        console.log(`List all problems, short description`);
-        console.log(req.params);
-
-        res.status(200).json();
+    secured.get('/problems/', async (req, res) => {
+        const result = await problems.findAll(req.query, req.db);
+        res.status(200).json(result);
     });
 
     secured.get('/problems/:id', (req, res) => {

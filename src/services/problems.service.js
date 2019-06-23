@@ -15,6 +15,13 @@ exports.create = async (problem, creatorId, db) => {
     return { id: result.insertedId, name: problem.name };
 }
 
+exports.findAll = async ({ search }, db) => {
+    const condition = search ? { "creator.name": { $regex: `.*${search}.*` } } : {};
+    const fields = { name: 1, creator: 1 };
+    const result = await problemsCollection(db).find(condition, fields).toArray();
+    return result.map(object => { return { id: object._id, name: object.name, creatorId: object.creator.id, creatorName: object.creator.name } });
+}
+
 function validateProblem({ name, description, tests }) {
     if (!name) {
         return { error: errorCodes.MISSING_FIELD };
