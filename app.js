@@ -2,22 +2,23 @@ require('dotenv').config()
 
 const express = require('express');
 const database = require('./src/config/database');
+
 const security = require('./src/config/security');
 const securityRouter = require('express').Router();
 
 const app = express();
+app.use(database.mongoConnector);
 
 app.use(express.json());
 securityRouter.all('/problems', security.filter);
-securityRouter.all('/problems/.*', security.filter);
-securityRouter.all('/users/.*', security.filter);
+securityRouter.all('/problems/*', security.filter);
+securityRouter.all('/users/*', security.filter);
 securityRouter.all('/users', security.filter);
-securityRouter.all('/competitions/.*', security.filter);
+securityRouter.all('/competitions/*', security.filter);
 securityRouter.all('/competitions', security.filter);
 securityRouter.all('/logout', security.filter);
 
 app.use(securityRouter);
-app.use(database.mongoConnector);
 
 require('./src/rest/registration.endpoint')(app);
 require('./src/rest/sessions.endpoint')(app, securityRouter);

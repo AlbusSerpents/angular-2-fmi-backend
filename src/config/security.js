@@ -1,16 +1,15 @@
-exports.filter = (req, res, next) => {
+const userService = require('./../services/users.service');
+
+exports.filter = async (req, res, next) => {
     const b64auth = (req.headers.authorization || '').split(' ')[1] || ''
     const [username, password] = new Buffer(b64auth, 'base64').toString().split(':')
 
+    const login = await userService.findByCredentials({ username, password }, req.db);
 
-    const loginUser = { username, password }
-
-    if (user.username === loginUser.username && user.password === loginUser.password) {
-        return next();
+    if (login.error) {
+        res.status(login.error.status).json({ code: login.error.code });
     } else {
-        res.status(401).json({ code: 'ACCESS_DENIED' });
+        req.authenticatedUser = login.id;
+        return next();
     }
 }
-
-// @TODO change this
-const user = { username: 'pesho', password: '1234' };
