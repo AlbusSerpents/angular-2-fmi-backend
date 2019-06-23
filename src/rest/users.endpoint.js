@@ -1,20 +1,19 @@
-module.exports = (secured) => {
-    secured.get('/users/:id', (req, res) => {
-        console.log(`Get another user's profile`)
-        console.log(req.params);
+const users = require('./../services/users.service');
+const networking = require('./../shared/networking.utils');
 
-        res.status(200).json();
+module.exports = (secured) => {
+    secured.get('/users/profile/:id', async (req, res) => {
+        const user = await users.findById(req.params.id, req.db);
+        networking.makeResponse(user, res, 200);
     });
 
-    secured.get('/users/my-profile', (req, res) => {
-        console.log('Send my profile')
-
-        res.status(200).json();
+    secured.get('/users/my-profile', async (req, res) => {
+        const user = await users.findMe(req.authenticatedUser, req.db);
+        networking.makeResponse(user, res, 200);
     })
 
-    secured.put('/users/:id', (req, res) => {
-        console.log(`Update my profile`)
-
-        res.status(204).json();
+    secured.put('/users/:id', async (req, res) => {
+        const result = await users.update(req.authenticatedUser, req.body, req.db);
+        networking.makeResponse(result, res, 204);
     })
 }

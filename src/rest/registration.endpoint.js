@@ -1,8 +1,9 @@
-module.exports = (public) => {
-    public.post('/register', (req, res) => {
-        console.log(req.body);
-        console.log('Do registration here');
+const usersService = require('./../services/users.service');
+const networking = require('./../shared/networking.utils');
 
-        res.status(201).json(req.body);
+module.exports = (public) => {
+    public.post('/register', async (req, res) => {
+        const result = await usersService.create(req.body, req.db);
+        networking.makeResponse(result, res, 201);
     });
 }
