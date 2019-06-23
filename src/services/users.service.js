@@ -1,4 +1,4 @@
-var mongo = require('mongodb');
+const mongo = require('mongodb');
 const bcrypt = require('bcrypt');
 const errorCodes = require('./../shared/error.codes');
 
