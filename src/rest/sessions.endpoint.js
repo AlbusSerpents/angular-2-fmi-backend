@@ -1,14 +1,18 @@
-module.exports = (app, secured) => {
-    app.post('/login', (req, res) => {
-        console.log(req.body);
-        console.log('Login');
+const usersService = require('./../services/users.service');
+const networking = require('./../shared/networking.utils');
 
-        res.status(201).json();
+module.exports = (app, secured) => {
+    app.post('/login', async (req, res) => {
+        const login = await usersService.findByCredentials(req.body, req.db);
+        if (!login.error) {
+            const user = await usersService.findMe(login.id, req.db);
+            networking.makeResponse(user, res, 201);
+        } else {
+            networking.makeResponse(login, res, 201);
+        }
     });
 
     secured.delete('/logout', (req, res) => {
-        console.log('Logout');
-
         res.status(204).json();
     });
 }
