@@ -1,12 +1,13 @@
 var mongo = require('mongodb');
-const crypto = require('crypto');
+const bcrypt = require('bcrypt');
 const errorCodes = require('./../shared/error.codes');
-const algorithm = 'aes-256-ctr';
+
+const saltRounds = 10;
 
 exports.create = async (registration, db) => {
     const errors = validateRegistration(registration);
     if (!errors) {
-        const encrypted = encrypt(registration.password);
+        const encrypted = await encrypt(registration.password);
         const user = { name: registration.name, email: registration.email, password: encrypted, username: registration.username };
 
         const result = await usersCollection(db).insertOne(user);
@@ -18,8 +19,7 @@ exports.create = async (registration, db) => {
 
 exports.findByCredentials = async ({ username, password }, db) => {
     const user = await usersCollection(db).findOne({ username });
-    const encrypted = encrypt(password);
-    if (user && encrypted === user.password) {
+    if (user && await comparePasswords(password, user.password)) {
         return { id: user._id };
     } else {
         return { error: errorCodes.UNAUTHENTICATED }
@@ -74,9 +74,10 @@ function validataProfile({ email, name }) {
     }
 }
 
-function encrypt(text) {
-    var cipher = crypto.createCipher(algorithm, text)
-    var crypted = cipher.update(text, 'utf8', 'hex')
-    crypted += cipher.final('hex');
-    return crypted;
+async function encrypt(text) {
+    return await bcrypt.hash(text, saltRounds);
+}
+
+async function comparePasswords(password, encrypted) {
+    return await bcrypt.compare(password, encrypted);
 }

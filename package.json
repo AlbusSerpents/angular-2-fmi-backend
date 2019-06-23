@@ -9,6 +9,7 @@
   "author": "D.Naydenov",
   "license": "ISC",
   "dependencies": {
+    "bcrypt": "^3.0.6",
     "dotenv": "^8.0.0",
     "express": "^4.17.1",
     "express-mongo-db": "^2.0.4",
