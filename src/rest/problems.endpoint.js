@@ -8,11 +8,14 @@ module.exports = (secured) => {
         res.status(200).json(result);
     });
 
-    secured.get('/problems/:id', (req, res) => {
-        console.log(' Get problem details');
-        console.log(req.params.id);
+    secured.get('/problems/:id', async (req, res) => {
+        const result = await problems.findById(req.params.id, req.db);
+        networking.makeResponse(result, res, 200);
+    })
 
-        res.status(200).json();
+    secured.get('/problems/:id/tests', async (req, res) => {
+        const result = await problems.findTests(req.params.id, req.authenticatedUser, req.db);
+        networking.makeResponse(result, res, 200);
     })
 
     secured.get('/problems/:id/statistics', (req, res) => {

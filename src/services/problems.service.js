@@ -1,3 +1,4 @@
+const mongo = require('mongodb');
 const errorCodes = require('./../shared/error.codes');
 const users = require('./users.service');
 
@@ -20,6 +21,35 @@ exports.findAll = async ({ search }, db) => {
     const fields = { name: 1, creator: 1 };
     const result = await problemsCollection(db).find(condition, fields).toArray();
     return result.map(object => { return { id: object._id, name: object.name, creatorId: object.creator.id, creatorName: object.creator.name } });
+}
+
+exports.findById = async (id, db) => {
+    const condition = { _id: new mongo.ObjectID(id) };
+    const fields = { name: 1, creator: 1, description: 1 };
+    const result = await problemsCollection(db).findOne(condition, fields);
+    if (!result) {
+        return { error: errorCodes.MISSING };
+    } else {
+        return {
+            id: result._id,
+            name: result.name,
+            creatorId: result.creator.id,
+            creatorName: result.creator.name,
+            description: result.description
+        };
+    }
+}
+
+exports.findTests = async (id, user, db) => {
+    const condition = { _id: new mongo.ObjectID(id) };
+    const result = await problemsCollection(db).findOne(condition, { tests: 1, "creator.id": 1 });
+    if (!result) {
+        return { error: errorCodes.MISSING };
+    } else if (!result.creator.id.equals(user)) {
+        return { error: errorCodes.FORBIDDEN };
+    } else {
+        return result.tests;
+    }
 }
 
 function validateProblem({ name, description, tests }) {
