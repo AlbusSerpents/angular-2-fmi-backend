@@ -65,6 +65,14 @@ exports.update = async (id, body, user, db) => {
     return result.matchedCount === 1 ? {} : { error: errorCodes.UPDATE_FAILED };
 }
 
+exports.deleteById = async (id, user, db) => {
+    const condition = { _id: new mongo.ObjectID(id), "creator.id": user };
+    const result = await problemsCollection(db).deleteOne(condition);
+    console.log(result.deletedCount);
+
+    return result.deletedCount === 1 ? {} : { error: errorCodes.DELETE_FAILED };
+}
+
 function validateProblem({ name, description, tests }) {
     if (!name) {
         return { error: errorCodes.MISSING_FIELD };

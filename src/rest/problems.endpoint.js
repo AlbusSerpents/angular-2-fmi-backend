@@ -35,9 +35,7 @@ module.exports = (secured) => {
     })
 
     secured.delete('/problems/:id', async (req, res) => {
-        console.log(`Deletes a problem, only for the creator`);
-        console.log(req.params.id);
-
-        res.status(204).json();
+        const result = await problems.deleteById(req.params.id, req.authenticatedUser, req.db);
+        networking.makeResponse(result, res, 204);
     })
 }
