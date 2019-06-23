@@ -1,3 +1,7 @@
+const problems = require('./../services/problems.service');
+const networking = require('./../shared/networking.utils');
+
+
 module.exports = (secured) => {
     secured.get('/problems/', (req, res) => {
         console.log(`List all problems, short description`);
@@ -20,11 +24,9 @@ module.exports = (secured) => {
         res.status(200).json();
     })
 
-    secured.post('/problems', (req, res) => {
-        console.log('Create problem');
-        console.log(req.body);
-
-        res.status(201).json();
+    secured.post('/problems', async (req, res) => {
+        const result = await problems.create(req.body, req.authenticatedUser, req.db);
+        networking.makeResponse(result, res, 201);
     })
 
     secured.put('/problems/:id/manage', (req, res) => {
