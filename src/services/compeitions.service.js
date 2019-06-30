@@ -16,9 +16,15 @@ exports.findAll = async ({ search }, db) => {
     return await compeitionsCollection(db)
         .find(condition, fields)
         .toArray()
-        .then(arr => arr.map(competition => {
-            return { id: competition._id, name: competition.name, creatorId: competition.creator.id, creatorName: competition.creator.name }
-        }));
+        .then(arr =>
+            arr.map(competition => {
+                return {
+                    id: competition._id,
+                    name: competition.name,
+                    creatorId: competition.creator.id,
+                    creatorName: competition.creator.name
+                }
+            }));
 }
 
 exports.findById = async (id, db) => {
@@ -58,7 +64,13 @@ exports.create = async ({ name, problemIds }, userId, db) => {
     return await compeitionsCollection(db)
         .insertOne(competition)
         .then(result => { return { id: result.insertedId, name }; });
+}
 
+exports.deleteById = async (id, userId, db) => {
+    const condition = { _id: new mongo.ObjectID(id), "creator.id": userId };
+    const result = await compeitionsCollection(db).deleteOne(condition);
+
+    return result.deletedCount === 1 ? {} : { error: errorCodes.DELETE_FAILED };
 }
 
 function validateCompetition({ name, problemIds }) {

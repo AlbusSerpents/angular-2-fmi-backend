@@ -17,10 +17,9 @@ module.exports = (secured) => {
         networking.makeResponse(result, res, 200);
     });
 
-    secured.delete('/competitions/:id', (req, res) => {
-        console.log(`Delete a competition`)
-
-        res.status(204).json();
+    secured.delete('/competitions/:id', async (req, res) => {
+        const result = await competitions.deleteById(req.params.id, req.authenticatedUser, req.db);
+        networking.makeResponse(result, res, 204);
     })
 
     secured.get('/competitions/:id/standings', (req, res) => {
