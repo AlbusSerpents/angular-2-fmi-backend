@@ -3,6 +3,24 @@ const errorCodes = require('./../shared/error.codes');
 const users = require('./users.service');
 const problems = require('./problems.service');
 
+exports.findAll = async ({ search }, db) => {
+    const fields = { name: 1, creator: 1 };
+    const fullCondition = {
+        $or: [
+            { "creator.name": { $regex: `.*${search}.*`, '$options': 'i' } },
+            { "name": { $regex: `.*${search}.*`, '$options': 'i' } }]
+    };
+
+    const condition = search ? fullCondition : {};
+
+    return await compeitionsCollection(db)
+        .find(condition, fields)
+        .toArray()
+        .then(arr => arr.map(competition => {
+            return { id: competition._id, name: competition.name, creatorId: competition.creator.id, creatorName: competition.creator.name }
+        }));
+}
+
 exports.create = async ({ name, problemIds }, userId, db) => {
     const error = validateCompetition({ name, problemIds });
     if (error) {

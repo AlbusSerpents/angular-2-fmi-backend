@@ -2,11 +2,9 @@ const competitions = require('./../services/compeitions.service');
 const networking = require('./../shared/networking.utils');
 
 module.exports = (secured) => {
-    secured.get('/competitions/', (req, res) => {
-        console.log(`Get list of competitions`)
-        console.log(req.params);
-
-        res.status(200).json();
+    secured.get('/competitions/', async (req, res) => {
+        const result = await competitions.findAll(req.query, req.db);
+        networking.makeResponse(result, res, 200);
     });
 
     secured.post('/competitions/', async (req, res) => {
