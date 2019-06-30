@@ -1,26 +1,15 @@
+const solutions = require('./../services/solutions.service');
+const networking = require('./../shared/networking.utils');
+
 module.exports = (secured) => {
-    secured.post('/problems/:id/solve', (req, res) => {
-        console.log('Submit a solution for a problem');
-        console.log(req.body);
-        console.log(req.params.id);
-
-        res.status(201).json();
+    secured.post('/problems/:id/solve', async (req, res) => {
+        const solution = { problemId: req.params.id, code: req.body.code };
+        const result = await solutions.submitSolution(solution, req.authenticatedUser, req.db);
+        networking.makeResponse(result, res, 201);
     })
 
-    secured.get('/problems/:id/solutions/:userId', (req, res) => {
-        console.log('Show my previous solutions (scores and id)');
-        console.log(req.params.id);
-        console.log(req.params.userId);
-
-        res.status(200).json();
-    })
-
-    secured.get('/problems/:id/solutions/:userId/:solutionId', (req, res) => {
-        console.log('Get a complete solution');
-        console.log(req.params.id);
-        console.log(req.params.userId);
-        console.log(req.params.solutionId);
-
-        res.status(200).json();
+    secured.get('/problems/:id/solutions', async (req, res) => {
+        const result = await solutions.findAll(req.params.id, req.db);
+        networking.makeResponse(result, res, 200);
     })
 }
