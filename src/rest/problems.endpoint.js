@@ -17,13 +17,6 @@ module.exports = (secured) => {
         networking.makeResponse(result, res, 200);
     })
 
-    secured.get('/problems/:id/statistics', async (req, res) => {
-        console.log('Get problem statistics');
-        console.log(req.params.id);
-
-        res.status(200).json();
-    })
-
     secured.post('/problems', async (req, res) => {
         const result = await problems.create(req.body, req.authenticatedUser, req.db);
         networking.makeResponse(result, res, 201);
