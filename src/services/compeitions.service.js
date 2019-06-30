@@ -21,6 +21,23 @@ exports.findAll = async ({ search }, db) => {
         }));
 }
 
+exports.findById = async (id, db) => {
+    const condition = { _id: new mongo.ObjectID(id) };
+    const fields = { name: 1, creator: 1, submitions: 1 };
+
+    return await compeitionsCollection(db)
+        .findOne(condition, fields)
+        .then(result => {
+            return {
+                id: result._id,
+                name: result.name,
+                creatorId: result.creator.id,
+                creatorName: result.creator.name,
+                submitions: result.submitions ? result.submitions.length : 0
+            };
+        })
+}
+
 exports.create = async ({ name, problemIds }, userId, db) => {
     const error = validateCompetition({ name, problemIds });
     if (error) {

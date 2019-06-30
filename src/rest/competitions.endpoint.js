@@ -12,11 +12,9 @@ module.exports = (secured) => {
         networking.makeResponse(result, res, 201);
     });
 
-    secured.get('/competitions/:id', (req, res) => {
-        console.log(`Get competition's details`)
-        console.log(req.params);
-
-        res.status(200).json();
+    secured.get('/competitions/:id', async (req, res) => {
+        const result = await competitions.findById(req.params.id, req.db);
+        networking.makeResponse(result, res, 200);
     });
 
     secured.delete('/competitions/:id', (req, res) => {
