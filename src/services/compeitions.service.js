@@ -66,6 +66,16 @@ exports.create = async ({ name, problemIds }, userId, db) => {
         .then(result => { return { id: result.insertedId, name }; });
 }
 
+exports.findStandings = async (id, db) => {
+    const condition = { _id: new mongo.ObjectID(id) };
+    const fields = { submitions: 1, _id: 0 };
+
+    return await compeitionsCollection(db)
+        .findOne(condition, fields)
+        .then(result => result.submitions ? result.submitions : [])
+        .then(submitions => submitions.sort((x, y) => x.points > y.points ? 1 : -1));
+}
+
 exports.deleteById = async (id, userId, db) => {
     const condition = { _id: new mongo.ObjectID(id), "creator.id": userId };
     const result = await compeitionsCollection(db).deleteOne(condition);

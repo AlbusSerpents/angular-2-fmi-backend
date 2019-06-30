@@ -22,9 +22,8 @@ module.exports = (secured) => {
         networking.makeResponse(result, res, 204);
     })
 
-    secured.get('/competitions/:id/standings', (req, res) => {
-        console.log(`List the standings of a competition`)
-
-        res.status(200).json();
+    secured.get('/competitions/:id/standings', async (req, res) => {
+        const result = await competitions.findStandings(req.params.id, req.db);
+        networking.makeResponse(result, res, 200);
     })
 }
