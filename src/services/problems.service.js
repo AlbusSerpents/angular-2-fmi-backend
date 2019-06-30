@@ -24,7 +24,14 @@ exports.findByIds = async (ids, db) => {
 }
 
 exports.findAll = async ({ search }, db) => {
-    const condition = search ? { "creator.name": { $regex: `.*${search}.*` } } : {};
+    const condition = search ?
+        {
+            $or: [
+                { "name": { $regex: `.*${search}.*`, '$options': 'i' } },
+                { "creator.name": { $regex: `.*${search}.*`, '$options': 'i' } }
+            ]
+        } :
+        {};
     const fields = { name: 1, creator: 1 };
     const result = await problemsCollection(db).find(condition, fields).toArray();
     return result.map(object => { return { id: object._id, name: object.name, creatorId: object.creator.id, creatorName: object.creator.name } });
@@ -75,7 +82,6 @@ exports.update = async (id, body, user, db) => {
 exports.deleteById = async (id, user, db) => {
     const condition = { _id: new mongo.ObjectID(id), "creator.id": user };
     const result = await problemsCollection(db).deleteOne(condition);
-    console.log(result.deletedCount);
 
     return result.deletedCount === 1 ? {} : { error: errorCodes.DELETE_FAILED };
 }
