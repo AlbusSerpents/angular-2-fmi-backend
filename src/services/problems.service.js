@@ -16,6 +16,13 @@ exports.create = async (problem, creatorId, db) => {
     return { id: result.insertedId, name: problem.name };
 }
 
+exports.findByIds = async (ids, db) => {
+    const idsObjects = ids.map(id => new mongo.ObjectID(id));
+    const fields = { _id: 1, name: 1 };
+    const condition = { _id: { $in: idsObjects } };
+    return await problemsCollection(db).find(condition, fields).toArray();
+}
+
 exports.findAll = async ({ search }, db) => {
     const condition = search ? { "creator.name": { $regex: `.*${search}.*` } } : {};
     const fields = { name: 1, creator: 1 };

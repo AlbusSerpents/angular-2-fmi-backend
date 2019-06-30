@@ -7,3 +7,4 @@ exports.UPDATE_FAILED = { code: 'UPDATE_FAILED', status: 409 };
 exports.DELETE_FAILED = { code: 'DELETE_FAILED', status: 409 };
 exports.FORBIDDEN = { code: 'NO_ACCESS', status: 403 };
 exports.SUBMITION_FAILED = { code: 'BAD_SUBMITION', status: 400 };
+exports.INVALID_PROBLEMS = { code: 'INVALID_PROBLEMS', status: 400 };
