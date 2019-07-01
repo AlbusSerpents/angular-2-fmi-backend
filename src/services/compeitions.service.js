@@ -74,7 +74,13 @@ exports.findStandings = async (id, db) => {
     return await compeitionsCollection(db)
         .findOne(condition, fields)
         .then(result => result.submitions ? result.submitions : [])
-        .then(submitions => submitions.sort((x, y) => x.points > y.points ? 1 : -1));
+        .then(submitions => submitions.map(submition => {
+            return {
+                userId: submition.userId,
+                name: submition.name,
+                score: submition.score
+            }
+        })).then(submitions => submitions.sort((x, y) => x.points > y.points ? 1 : -1));
 }
 
 exports.deleteById = async (id, userId, db) => {
