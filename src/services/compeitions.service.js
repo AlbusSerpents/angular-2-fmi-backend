@@ -29,7 +29,7 @@ exports.findAll = async ({ search }, db) => {
 
 exports.findById = async (id, db) => {
     const condition = { _id: new mongo.ObjectID(id) };
-    const fields = { name: 1, creator: 1, submitions: 1 };
+    const fields = { name: 1, creator: 1, submitions: 1, problems: 1 };
 
     return await compeitionsCollection(db)
         .findOne(condition, fields)
@@ -37,6 +37,7 @@ exports.findById = async (id, db) => {
             return {
                 id: result._id,
                 name: result.name,
+                problems: result.problems,
                 creatorId: result.creator.id,
                 creatorName: result.creator.name,
                 submitions: result.submitions ? result.submitions.length : 0
