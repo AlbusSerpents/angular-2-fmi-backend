@@ -22,6 +22,16 @@ exports.participate = async (id, userId, db) => {
         .then(updated => updated === 1 ? { score: 0 } : { error: errorCodes.UPDATE_FAILED });
 }
 
+exports.leave = async (id, userId, db) => {
+    const condition = { _id: new mongo.ObjectID(id) };
+    const pull = { $pull: { submitions: { userId } } };
+
+    return await compeitionsCollection(db)
+        .updateOne(condition, pull, { upsert: false })
+        .then(result => result.matchedCount)
+        .then(updated => updated === 1 ? null : { error: errorCodes.UPDATE_FAILED });
+}
+
 function compeitionsCollection(db) {
     return db.collection('competitions');
 }

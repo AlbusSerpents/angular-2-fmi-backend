@@ -7,14 +7,6 @@ module.exports = (secured) => {
         networking.makeResponse(result, res, 201);
     });
 
-    secured.delete('/competitions/:id/leave', (req, res) => {
-        console.log(`Leave competition participation`)
-        console.log(req.params);
-
-        res.status(204).json();
-    });
-
-
     secured.post('/competitions/:id/:problemId', (req, res) => {
         console.log(`Submit a solution to a problem in a competition`)
         console.log(req.params);
@@ -22,4 +14,8 @@ module.exports = (secured) => {
         res.status(200).json();
     });
 
+    secured.delete('/competitions/:id/leave', async (req, res) => {
+        const result = await participations.leave(req.params.id, req.authenticatedUser, req.db);
+        networking.makeResponse(result, res, 204);
+    });
 }
