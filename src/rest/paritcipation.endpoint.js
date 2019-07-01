@@ -1,9 +1,10 @@
-module.exports = (secured) => {
-    secured.post('/competitions/:id/participate', (req, res) => {
-        console.log(`Enter competition participation`)
-        console.log(req.params);
+const networking = require('./../shared/networking.utils');
+const participations = require('./../services/participatiosn.service');
 
-        res.status(200).json();
+module.exports = (secured) => {
+    secured.post('/competitions/:id/participate', async (req, res) => {
+        const result = await participations.participate(req.params.id, req.authenticatedUser, req.db);
+        networking.makeResponse(result, res, 201);
     });
 
     secured.delete('/competitions/:id/leave', (req, res) => {
@@ -21,10 +22,4 @@ module.exports = (secured) => {
         res.status(200).json();
     });
 
-    secured.get('/competitions/:id/results', (req, res) => {
-        console.log(`Chenck my result in a competition`)
-        console.log(req.params);
-
-        res.status(200).json();
-    });
 }
