@@ -56,6 +56,14 @@ exports.leave = async (id, userId, db) => {
         .then(updated => updated === 1 ? null : { error: errorCodes.UPDATE_FAILED });
 }
 
+exports.mine = async (userId, db) => {
+    const condition = { submitions: { $elemMatch: { userId: userId } } };
+    const fields = { name: 1 };
+    return await compeitionsCollection(db)
+        .find(condition, fields)
+        .toArray();
+}
+
 async function recordSubmition(competitionId, userId, problemId, points, db) {
     const condition = { _id: new mongo.ObjectID(competitionId), "submitions.userId": userId };
     return await compeitionsCollection(db)

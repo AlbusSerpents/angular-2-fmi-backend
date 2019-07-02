@@ -17,4 +17,9 @@ module.exports = (secured) => {
         const result = await participations.leave(req.params.id, req.authenticatedUser, req.db);
         networking.makeResponse(result, res, 204);
     });
+
+    secured.get('/competitions/show/mine', async (req, res) => {
+        const result = await participations.mine(req.authenticatedUser, req.db);
+        networking.makeResponse(result, res, 200);
+    });
 }
