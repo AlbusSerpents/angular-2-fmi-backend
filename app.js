@@ -16,6 +16,7 @@ securityRouter.all('/users/*', security.filter);
 securityRouter.all('/users', security.filter);
 securityRouter.all('/competitions/*', security.filter);
 securityRouter.all('/competitions', security.filter);
+securityRouter.all('/run', security.filter);
 securityRouter.all('/logout', security.filter);
 
 app.use(securityRouter);
@@ -27,6 +28,7 @@ require('./src/rest/problems.endpoint')(securityRouter);
 require('./src/rest/solutions.endpoint')(securityRouter);
 require('./src/rest/competitions.endpoint')(securityRouter);
 require('./src/rest/paritcipation.endpoint')(securityRouter);
+require('./src/rest/code.endpoint')(securityRouter);
 
 app.get('/status', (req, res) => {
   const status = {
