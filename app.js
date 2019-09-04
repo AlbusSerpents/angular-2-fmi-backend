@@ -2,14 +2,17 @@ require('dotenv').config()
 
 const express = require('express');
 const database = require('./src/config/database');
+var cors = require('cors')
 
 const security = require('./src/config/security');
 const securityRouter = require('express').Router();
 
 const app = express();
 app.use(database.mongoConnector);
+app.use(cors())
 
 app.use(express.json());
+
 securityRouter.all('/problems', security.filter);
 securityRouter.all('/problems/*', security.filter);
 securityRouter.all('/users/*', security.filter);
