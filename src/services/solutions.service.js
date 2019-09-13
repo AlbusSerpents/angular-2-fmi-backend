@@ -1,13 +1,13 @@
 const mongo = require('mongodb');
+const codeRunner = require('./code.service');
 const errorCodes = require('./../shared/error.codes');
 const users = require('./users.service');
-const parser = require('../interpreter/interpreter.facade');
 
 exports.submitSolution = async ({ problemId, code }, user, db) => {
     const idCondition = { _id: new mongo.ObjectID(problemId) };
 
     const problem = await problemsCollection(db).findOne(idCondition);
-    const result = calculateResults(problem, code);
+    const result = await calculateResults(problem, code);
 
     const { name } = await users.findById(user, db);
     const submition = { user: name, submittedAt: new Date(), points: result.points, tests: result.results };
@@ -35,20 +35,23 @@ function presentSolution({ user, submittedAt, points }) {
     return { user, submittedAt, points };
 }
 
-function calculateResults(problem, code) {
-    return problem
+async function calculateResults(problem, code) {
+    return await problem
         .tests
-        .map(test => executeTest(test, code))
-        .reduce(({ points, results }, test) => {
+        .map(async test => await executeTest(test, code))
+        .reduce(async (base, data) => {
+            const test = await data;
+            const { points, results } = await base;
+            console.log(test);
             results.push(test.passed);
             return { points: points + test.points, results }
         }, { points: 0, results: [] });
 }
 
-function executeTest({ input, expected, points }, code) {
-    const parsed = parser.run({ code, input });
+async function executeTest({ input, expected, points }, code) {
+    const parsed = await codeRunner.run({ code, input });
     if (parsed) {
-        const actual = parsed.output;
+        const actual = parsed.value.output;
         return actual === String(expected) ? { passed: true, points } : { passed: false, points: 0 };
     } else {
         return { passed: false, points: 0 };

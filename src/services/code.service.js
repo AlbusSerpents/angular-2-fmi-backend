@@ -1,6 +1,4 @@
 const request = require('request-promise');
-const errorCodes = require('./../shared/error.codes');
-const interpreter = require('../interpreter/interpreter.facade');
 
 exports.run = async (body) => {
     const requestOptions = {
